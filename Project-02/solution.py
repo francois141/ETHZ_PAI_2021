@@ -131,15 +131,11 @@ class Model(object):
                     # HOW WE SHOULD WORK HERE
                     # 1) do forward pass
                     # TODO: we don't need to use KLLoss, (log_prior + log_variational_posterior) should work as well
-                    
-                    loss = torch.tensor(0.0)
-                    for _ in range(0, 2):
-                        results, log_prior, log_variational_posterior = self.network(batch_x)
-                        random_noise = torch.normal(mean=torch.zeros_like(results), std=torch.ones_like(results) * 0.1)
-                        results += random_noise
-                        # 2) compute loss THE LOSS SHOULD BE THE NORMAL ONE + A CUSTOM KULLBACKLEIBLER LOSS
-                        # Cf. Blundell, Eq. 2 under 3.1: F(D, theta) = log[variational_post] - log[prior] - log[likelihood]
-                        loss += F.nll_loss(F.log_softmax(results, dim=1), batch_y, reduction='mean') + torch.sum(log_variational_posterior - log_prior) * (1/num_batches)
+                    results, log_prior, log_variational_posterior = self.network(batch_x)
+
+                    # 2) compute loss THE LOSS SHOULD BE THE NORMAL ONE + A CUSTOM KULLBACKLEIBLER LOSS
+                    # Cf. Blundell, Eq. 2 under 3.1: F(D, theta) = log[variational_post] - log[prior] - log[likelihood]
+                    loss = F.nll_loss(F.log_softmax(results), batch_y, reduction='mean') + torch.sum(log_variational_posterior - log_prior) * (1/num_batches)
 
                     # 3) backpropagate the loss to the gradients
                     loss.backward(retain_graph=True)
