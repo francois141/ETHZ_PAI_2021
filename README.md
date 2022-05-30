@@ -1,6 +1,6 @@
 # ETHZ_PAI_2021
 
-### Project for the course PAI taught at ethz
+### Projects of the course PAI given at ETH
 
 * Project 1 : Gaussian process regression
 * Project 2 : Implementation of a bayesian neural network
